@@ -7,21 +7,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# React & Node
+node_modules/
+dist/
+dist-ssr/
 *.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 
 # Python & Virtual Environment
 venv/
@@ -30,10 +20,22 @@ __pycache__/
 *.pyc
 .env
 
-# React & Node
-node_modules/
-dist/
+# File Model AI & Dataset Besar
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.safetensors
+*.bin
+*.csv
 
-# OS & Editor
+# Editor & OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
 .DS_Store
-.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
