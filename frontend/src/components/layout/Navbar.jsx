@@ -9,7 +9,7 @@ export function Navbar({ onOpenModal, searchQuery = "", setSearchQuery }) {
         {/* 1. KIRI: Brand */}
         <div className="flex items-center shrink-0">
           <Link
-            className="font-bold text-base sm:text-xl text-[#FCFCFC] whitespace-nowrap focus:outline-none"
+            className="font-amarante text-2xl tracking-wide text-[#FCFCFC] whitespace-nowrap focus:outline-none"
             to="/"
             aria-label="Beranda"
           >

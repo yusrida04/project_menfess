@@ -24,13 +24,13 @@ export function CategoryFilter({ selectedCategory, onSelectCategory }) {
             }`}
           >
             <div
-              className={`text-sm font-bold ${
+              className={`text-lg font-bold ${
                 isActive ? "text-[#FCFCFC]" : "text-[#CFCFCF]"
               }`}
             >
               {cat.label}
             </div>
-            <p className="text-[11px] text-[#8E8E8E] leading-snug mt-1 line-clamp-2">
+            <p className="text-[12px] text-[#8E8E8E] leading-snug mt-1 line-clamp-2">
               {cat.desc}
             </p>
           </button>
