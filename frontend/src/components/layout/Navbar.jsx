@@ -36,7 +36,7 @@ export function Navbar({ onOpenModal, searchQuery = "", setSearchQuery }) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery?.(e.target.value)}
-              placeholder="Cari menfess atau #fakultas..."
+              placeholder="Cari menfess"
               className="w-full rounded-full border border-[#3A3A3A] bg-[#4A4A4A] py-1.5 pl-9 pr-8 text-xs sm:text-sm text-[#CFCFCF] placeholder-[#8E8E8E] hover:bg-[#525252] focus:bg-[#525252] focus:border-[#7D7D7D] focus:outline-none transition-colors"
             />
             <svg

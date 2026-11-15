@@ -94,7 +94,7 @@ export function Komentar({ menfessId, onCommentAdded }) {
       {/* 2. Bar Pencarian Komentar (Muncul jika sudah ada komentar) */}
       {comments.length > 0 && (
         <div className="flex items-center gap-2">
-          <div className="relative flex items-center max-w-52">
+          <div className="relative flex items-center w-full">
             <Search className="size-3.5 text-[#8E8E8E] absolute left-3" />
             <input
               type="text"

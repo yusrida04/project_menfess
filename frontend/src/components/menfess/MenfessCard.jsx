@@ -38,7 +38,7 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
       className={
         isDetail
           ? "space-y-3"
-          : "rounded-2xl bg-[#252525] border border-[#3A3A3A] hover:border-[#525252] p-5 space-y-3 transition-colors cursor-pointer"
+          : "rounded-2xl bg-[#252525] border border-[#3A3A3A] hover:border-[#525252] p-5 space-y-3 transition-colors cursor-pointer shadow-xl"
       }
     >
       {/* Header Kategori & Waktu */}
