@@ -63,7 +63,7 @@ export function App() {
         setSearchQuery={setSearchQuery}/>
 
       {/* 2. Konten halaman berdasarkan URL */}
-      <main className="w-full max-w-5xl mx-auto px-4 py-6 space-y-3">
+      <main className="w-full px-4 py-6 space-y-3">
         <Routes>
           <Route
             path="/"

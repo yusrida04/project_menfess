@@ -4,7 +4,8 @@ import { SquarePlus, ArrowUpRight, X } from "lucide-react";
 export function Navbar({ onOpenModal, searchQuery = "", setSearchQuery }) {
   return (
     <header className="sticky top-0 z-40 w-full bg-[#3A3A3A] border-b border-[#4A4A4A]">
-      <nav className="max-w-6xl mx-auto flex items-center justify-between gap-3 py-3 px-4 sm:px-6">
+      {/* 1. Ubah max-w-6xl mx-auto menjadi w-full dan padding px-4 agar sejajar persis dengan <main> */}
+      <nav className="w-full flex items-center justify-between gap-4 py-3 px-4">
         
         {/* 1. KIRI: Brand */}
         <div className="flex items-center shrink-0">
@@ -17,8 +18,8 @@ export function Navbar({ onOpenModal, searchQuery = "", setSearchQuery }) {
           </Link>
         </div>
 
-        {/* 2. TENGAH: Search Bar Lebar Penuh (flex-1) */}
-        <div className="flex-1 max-w-xl mx-auto flex items-center justify-end md:justify-center">
+        {/* 2. TENGAH: Search Bar Lebar Penuh (hapus max-w-xl agar memanjang penuh) */}
+        <div className="flex-1 flex items-center justify-end md:justify-center">
           {/* Tombol ikon search khusus layar HP kecil */}
           <button
             type="button"

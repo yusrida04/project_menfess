@@ -30,38 +30,44 @@ const ATURAN = [
 
 export function AboutPage() {
   return (
-    <div className="rounded-2xl bg-[#252525] p-6 border border-[#333333] shadow-xs space-y-5">
+    <div className="rounded-2xl bg-[#252525] p-6 border-[#333333] shadow-xs space-y-5">
       {/* Header */}
-      <div className="space-y-1.5">
-        <h1 className="text-xl font-bold text-[#EFEFEF]">Tentang UNIMED Menfess</h1>
-        <p className="text-sm text-[#CFCFCF] leading-relaxed">
-          Ruang bagi mahasiswa Universitas Negeri Medan untuk berbagi cerita, bertanya, dan menyampaikan
-          aspirasi secara anonim. Kiriman dikelompokkan otomatis ke dalam kategori agar mudah ditemukan,
-          dan kiriman yang berisiko disaring sebelum tayang.
-        </p>
-      </div>
-
-      {/* Cara Kerja */}
-      <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-2.5">
-        <h2 className="text-sm font-semibold text-[#EFEFEF]">Cara Kerja:</h2>
-        <ol className="list-decimal list-inside text-xs sm:text-sm text-[#CFCFCF] space-y-1.5 leading-relaxed">
-          {LANGKAH.map((teks) => (
-            <li key={teks}>{teks}</li>
-          ))}
-        </ol>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-10">
+          <h1 className="text-xl font-bold text-[#EFEFEF] items-start">
+            Tentang UNIMED Menfess
+          </h1>
+          <p className="text-[5rem] leading-none text-[#F59E0B] items-center">
+            Cerita yang tak perlu bernama.
+          </p>
+        </div>
+        <div className="space-y-4">
+          <p className="text-lg text-[#CFCFCF] leading-relaxed">
+            Ruang anonim mahasiswa Universitas Negeri Medan untuk berbagi cerita dan aspirasi, dengan pengelompokan kategori otomatis serta penyaringan keamanan sebelum tayang.
+          </p>
+          {/* Cara Kerja */}
+          <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-2.5">
+            <h2 className="text-xl font-semibold text-[#EFEFEF]">Cara Kerja:</h2>
+            <ol className="list-decimal list-inside text-xs sm:text-lg text-[#CFCFCF] space-y-1.5 leading-relaxed">
+              {LANGKAH.map((teks) => (
+                <li key={teks}>{teks}</li>
+              ))}
+            </ol>
+          </div>
+        </div>
       </div>
 
       {/* Kategori */}
       <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-3">
-        <h2 className="text-sm font-semibold text-[#EFEFEF]">Kategori Otomatis:</h2>
-        <div className="grid gap-2.5 sm:grid-cols-2">
+        <h2 className="text-xl font-semibold text-[#EFEFEF]">Kategori Otomatis:</h2>
+        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
           {KATEGORI.map((k) => (
             <div
               key={k.nama}
               className="rounded-lg bg-[#252525] p-3 border border-[#333333] space-y-0.5"
             >
-              <p className="text-xs sm:text-sm font-semibold text-[#EFEFEF]">{k.nama}</p>
-              <p className="text-xs text-[#A3A3A3] leading-relaxed">{k.isi}</p>
+              <p className="font-semibold text-[2rem] text-[#EFEFEF]">{k.nama}</p>
+              <p className="text-lg text-[#A3A3A3] leading-relaxed">{k.isi}</p>
             </div>
           ))}
         </div>
@@ -69,8 +75,8 @@ export function AboutPage() {
 
       {/* Moderasi dan Privasi */}
       <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-2.5">
-        <h2 className="text-sm font-semibold text-[#EFEFEF]">Moderasi dan Privasi:</h2>
-        <ul className="list-disc list-inside text-xs sm:text-sm text-[#CFCFCF] space-y-1.5 leading-relaxed">
+        <h2 className="text-xl font-semibold text-[#EFEFEF]">Moderasi dan Privasi:</h2>
+        <ul className="list-disc list-inside text-lg sm:text-lg text-[#CFCFCF] space-y-1.5 leading-relaxed">
           {MODERASI_PRIVASI.map((teks) => (
             <li key={teks}>{teks}</li>
           ))}
@@ -79,8 +85,8 @@ export function AboutPage() {
 
       {/* Aturan Komunitas */}
       <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-2.5">
-        <h2 className="text-sm font-semibold text-[#EFEFEF]">Aturan Komunitas:</h2>
-        <ul className="list-disc list-inside text-xs sm:text-sm text-[#CFCFCF] space-y-1.5 leading-relaxed">
+        <h2 className="text-xl font-semibold text-[#EFEFEF]">Aturan Komunitas:</h2>
+        <ul className="list-disc list-inside text-lg sm:text-lg text-[#CFCFCF] space-y-1.5 leading-relaxed">
           {ATURAN.map((teks) => (
             <li key={teks}>{teks}</li>
           ))}
