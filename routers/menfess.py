@@ -8,9 +8,15 @@ import hmac, hashlib, os
 
 router = APIRouter(prefix="/menfess", tags=["Menfess"])
 SECRET_KEY = os.getenv("SECRET_KEY", "ganti-dengan-secret-key-acak-panjang")
+THRESHOLD = 0.799545
 
 def format_waktu(dt) -> str:
     return dt.strftime("%d %b %Y, %H:%M") if dt else "Baru saja"
+
+def tentukan_status_menfess(label_prediksi: str, confidence_score: float) -> str:
+    if confidence_score >= THRESHOLD:
+        return "published"
+    return "flagged"
 
 @router.get("")
 def baca_menfess(
@@ -34,6 +40,7 @@ def baca_menfess(
             FROM menfess m
             LEFT JOIN votes v 
                 ON v.menfess_id = m.id AND v.token_hash = %s
+            WHERE m.status = 'published'
             ORDER BY m.created_at DESC
         """, (token_hash,))
         rows = cur.fetchall()
@@ -74,7 +81,7 @@ def baca_detail_menfess(
             FROM menfess m
             LEFT JOIN votes v 
                 ON v.menfess_id = m.id AND v.token_hash = %s
-            WHERE m.id = %s
+            WHERE m.id = %s AND m.status = 'published'
         """, (token_hash, menfess_id))
         r = cur.fetchone()
 
@@ -103,14 +110,15 @@ def kirim_menfess(
     cek_batas(f"menfess_d:{token_hash}", *LIMITS["menfess_day"], "mengirim menfess harian (10/hari)")
 
     teks_bersih = payload.content.strip()
-    kategori_ai = prediksi_kategori(teks_bersih)
+    kategori_ai, confidence_ai = prediksi_kategori(teks_bersih)
+    status_menfess = tentukan_status_menfess(kategori_ai, confidence_ai)
 
     with conn.cursor() as cur:
         cur.execute("""
-            INSERT INTO menfess (category, content)
-            VALUES (%s, %s)
-            RETURNING id, category AS tag, content, likes, created_at
-        """, (kategori_ai, teks_bersih))
+            INSERT INTO menfess (category, content, status, confidence)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id, category AS tag, content, likes, status, created_at
+        """, (kategori_ai, teks_bersih, status_menfess, confidence_ai))
         row = cur.fetchone()
 
     return {
@@ -118,6 +126,7 @@ def kirim_menfess(
         "tag": row["tag"],
         "content": row["content"],
         "likes": row["likes"],
+        "status": row["status"],
         "user_vote": 0,
         "timestamp": "Baru saja",
     }
@@ -137,13 +146,11 @@ def vote_menfess(
             raise HTTPException(status_code=404, detail="Menfess tidak ditemukan")
 
         if payload.value == 0:
-            # Batalkan vote
             cur.execute(
                 "DELETE FROM votes WHERE menfess_id = %s AND token_hash = %s",
                 (menfess_id, token_hash),
             )
         else:
-            # Insert baru atau ubah arah vote (-1 <-> 1)
             cur.execute("""
                 INSERT INTO votes (menfess_id, token_hash, value)
                 VALUES (%s, %s, %s)
@@ -151,7 +158,6 @@ def vote_menfess(
                 DO UPDATE SET value = EXCLUDED.value
             """, (menfess_id, token_hash, payload.value))
 
-        # Hitung ulang total skor dari tabel votes dan simpan ke tabel menfess
         cur.execute("""
             UPDATE menfess
             SET likes = GREATEST(COALESCE((SELECT SUM(value) FROM votes WHERE menfess_id = %s), 0), 0)
@@ -163,7 +169,6 @@ def vote_menfess(
     return {"id": menfess_id, "likes": updated["likes"], "user_vote": payload.value}
 
 def alias_untuk(cur, menfess_id: int, token_hash: str) -> str:
-    # 1. Cek apakah token_hash ini sudah pernah komentar di menfess yang sama
     cur.execute(
         "SELECT alias FROM comments WHERE menfess_id = %s AND token_hash = %s LIMIT 1",
         (menfess_id, token_hash),
@@ -172,7 +177,6 @@ def alias_untuk(cur, menfess_id: int, token_hash: str) -> str:
     if row:
         return row["alias"]
 
-    # 2. Hitung berapa pengomentar unik yang sudah ada di menfess ini
     cur.execute(
         "SELECT COUNT(DISTINCT token_hash) AS total FROM comments WHERE menfess_id = %s",
         (menfess_id,),

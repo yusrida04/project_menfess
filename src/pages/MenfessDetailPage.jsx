@@ -40,7 +40,7 @@ export function MenfessDetailPage({ menfessList = [], onVote }) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
+    <div className="px-4 space-y-4">
       {/* Tombol Left Arrow Kembali */}
       <button
         type="button"
@@ -60,7 +60,7 @@ export function MenfessDetailPage({ menfessList = [], onVote }) {
           {errorMsg || "Menfess tidak ditemukan."}
         </div>
       ) : (
-        <div className="rounded-2xl bg-[#252525] border border-[#3A3A3A] p-5 space-y-2">
+        <div className="rounded-2xl bg-[#252525] border border-[#3A3A3A] p-5 space-y-2 shadow-lg">
           {/* Kartu Menfess Utama (mode detail: tidak bisa diklik navigasi ulang) */}
           <MenfessCard
             menfess={menfess}

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import menfess
+from routers import menfess, admin
 
 app = FastAPI(title="UNIMED Menfess API")
 
@@ -13,6 +13,7 @@ app.add_middleware(
 )
 
 app.include_router(menfess.router)
+app.include_router(admin.router)
 
 @app.get("/")
 def root():

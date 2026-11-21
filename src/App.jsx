@@ -5,9 +5,9 @@ import { AddMenfessModal } from "./components/menfess/AddMenfessModal";
 import { HomePage } from "./pages/HomePage";
 import { PopularPage } from "./pages/PopularPage";
 import { AboutPage } from "./pages/AboutPage";
+import { AdminPage } from "./pages/AdminPage"; // <-- Tambahkan ini
 import { apiFetch } from "./utils/api";
 import { MenfessDetailPage } from "./pages/MenfessDetailPage";
-
 
 export function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,6 +15,7 @@ export function App() {
   const [menfessList, setMenfessList] = useState([]);
   const [isLoadingMenfess, setIsLoadingMenfess] = useState(true);
   const [menfessError, setMenfessError] = useState("");
+  const [submitNotice, setSubmitNotice] = useState(""); // <-- Notifikasi moderasi
 
   useEffect(() => {
     async function loadMenfess() {
@@ -31,8 +32,19 @@ export function App() {
   }, []);
 
   const handleAddMenfess = (newMenfess) => {
+    // Jika confidence < 0.799545, statusnya 'flagged' (ditahan moderator)
+    if (newMenfess.status === "flagged") {
+      setSubmitNotice(
+        "Menfess terkirim! Karena perlu verifikasi kategori, menfessmu masuk antrean moderasi sebelum tayang."
+      );
+      setTimeout(() => setSubmitNotice(""), 6000);
+      return;
+    }
+
+    // Jika status 'published', langsung tampilkan di beranda
     setMenfessList([newMenfess, ...menfessList]);
   };
+
   const handleVote = async (id, value, onVoteSuccess) => {
     const updated = await apiFetch(`/menfess/${id}/vote`, {
       method: "POST",
@@ -58,9 +70,18 @@ export function App() {
   return (
     <div className="min-h-screen bg-[#252525]">
       {/* 1. Navbar */}
-      <Navbar onOpenModal={() => setIsModalOpen(true)} 
+      <Navbar
+        onOpenModal={() => setIsModalOpen(true)}
         searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}/>
+        setSearchQuery={setSearchQuery}
+      />
+
+      {/* Banner Info jika menfess masuk antrean moderasi */}
+      {submitNotice && (
+        <div className="mx-auto mt-3 max-w-xl rounded-lg border border-amber-700 bg-amber-950/80 px-4 py-2.5 text-center text-xs text-amber-200">
+          {submitNotice}
+        </div>
+      )}
 
       {/* 2. Konten halaman berdasarkan URL */}
       <main className="w-full px-4 py-6 space-y-3">
@@ -90,7 +111,8 @@ export function App() {
               />
             }
           />
-            <Route path="/tentang" element={<AboutPage />} />
+          <Route path="/tentang" element={<AboutPage />} />
+          <Route path="/admin" element={<AdminPage />} /> {/* <-- Rute Admin */}
         </Routes>
       </main>
 
