@@ -45,22 +45,22 @@ export function MenfessDetailPage({ menfessList = [], onVote }) {
       <button
         type="button"
         onClick={handleBack}
-        className="inline-flex items-center gap-2 rounded-full bg-[#2A2A2A] hover:bg-[#3A3A3A] border border-[#3E3E3E] px-4 py-2 text-sm font-medium text-[#EAEAEA] transition-colors cursor-pointer"
+        className="inline-flex items-center gap-2 rounded-full bg-[#0d110e] hover:bg-[#141c17] border border-[#1f2a22] px-4 py-2 text-sm font-medium text-[#EAEAEA] transition-colors cursor-pointer"
       >
         <ArrowLeft className="size-4" />
         <span>Kembali</span>
       </button>
 
       {isLoading ? (
-        <div className="rounded-2xl bg-[#252525] border border-[#3A3A3A] p-6 text-center text-sm text-[#8E8E8E]">
+        <div className="rounded-2xl bg-[#0d110e] border border-[#1f2a22] p-6 text-center text-sm text-[#8E8E8E]">
           Memuat postingan...
         </div>
       ) : errorMsg || !menfess ? (
-        <div className="rounded-2xl bg-[#252525] border border-[#3A3A3A] p-6 text-center text-sm text-amber-400">
+        <div className="rounded-2xl bg-[#0d110e] border border-[#1f2a22] p-6 text-center text-sm text-amber-400">
           {errorMsg || "Menfess tidak ditemukan."}
         </div>
       ) : (
-        <div className="rounded-2xl bg-[#252525] border border-[#3A3A3A] p-5 space-y-2 shadow-lg">
+        <div className="rounded-2xl bg-[#0d110e] border border-[#1f2a22] p-5 space-y-2 shadow-lg">
           {/* Kartu Menfess Utama (mode detail: tidak bisa diklik navigasi ulang) */}
           <MenfessCard
             menfess={menfess}

@@ -10,13 +10,15 @@ export function anonToken() {
 }
 
 export async function apiFetch(endpoint, options = {}) {
-  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: {
+  const headers = {
       "Content-Type": "application/json",
       "X-Anon-Token": anonToken(),
       ...options.headers,
-    },
+  };
+
+  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers,
   });
 
   if (!res.ok) {

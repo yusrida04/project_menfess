@@ -2,13 +2,20 @@ import { useState } from "react";
 import { CategoryFilter } from "../components/menfess/CategoryFilter";
 import { MenfessCard } from "../components/menfess/MenfessCard";
 
-export function HomePage({ menfessList, searchQuery, onVote }) {
+export function HomePage({ menfessList, searchQuery = "", onVote }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Saring berdasarkan 5 kotak kategori (cek field category atau tag)
-  const filteredByCategory = menfessList.filter((item) => {
+  const keyword = searchQuery.trim().toLowerCase();
+
+  // Saring berdasarkan kategori DAN kata kunci pencarian
+  const filteredMenfess = menfessList.filter((item) => {
     const kategoriItem = item.category || item.tag || "Lainnya";
-    return selectedCategory === "All" || kategoriItem === selectedCategory;
+    const cocokKategori =
+      selectedCategory === "All" || kategoriItem === selectedCategory;
+    const cocokKataKunci =
+      !keyword || (item.content || "").toLowerCase().includes(keyword);
+
+    return cocokKategori && cocokKataKunci;
   });
 
   return (
@@ -21,20 +28,22 @@ export function HomePage({ menfessList, searchQuery, onVote }) {
 
       <div className="pb-1">
         <h1 className="text-base font-bold text-[#FCFCFC]">
-          {searchQuery
+          {keyword
             ? `Hasil pencarian "${searchQuery}"`
             : `Menfess Terbaru (${selectedCategory})`}
         </h1>
       </div>
 
-      {filteredByCategory.length > 0 ? (
-        filteredByCategory.map((item) => (
+      {filteredMenfess.length > 0 ? (
+        filteredMenfess.map((item) => (
           <MenfessCard key={item.id} menfess={item} onVote={onVote} />
         ))
       ) : (
-        <div className="rounded-2xl bg-[#252525] p-8 text-center border border-[#333333]">
+        <div className="rounded-2xl bg-[#0d110e] p-8 text-center border border-[#1f2a22]">
           <p className="text-sm text-[#8E8E8E]">
-            Belum ada menfess di kategori {selectedCategory}.
+            {keyword
+              ? `Tidak ditemukan menfess dengan kata kunci "${searchQuery}".`
+              : `Belum ada menfess di kategori ${selectedCategory}.`}
           </p>
         </div>
       )}

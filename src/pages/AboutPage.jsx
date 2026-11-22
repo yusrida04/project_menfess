@@ -30,53 +30,52 @@ const ATURAN = [
 
 export function AboutPage() {
   return (
-    <div className="rounded-2xl bg-[#252525] p-6 border-[#333333] shadow-xs space-y-5">
+    <div className="rounded-2xl border border-[#1f2a22] bg-[#0d110e] p-6 shadow-xl space-y-6">
       {/* Header */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-10">
-          <h1 className="text-xl font-bold text-[#EFEFEF] items-start">
-            Tentang UNIMED Menfess
-          </h1>
-          <p className="text-[5rem] leading-none text-[#F59E0B] items-center">
-            Cerita yang tak perlu bernama.
-          </p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <div className="space-y-4">
-          <p className="text-lg text-[#CFCFCF] leading-relaxed">
+          <span className="inline-block rounded-full bg-[#0f3d24] px-3 py-1 text-xs font-semibold text-[#22e07a]">
+            Tentang UNIMED Menfess
+          </span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-[#22e07a]">
+            Cerita yang tak perlu bernama.
+          </h1>
+          <p className="text-sm sm:text-base text-[#CFCFCF] leading-relaxed">
             Ruang anonim mahasiswa Universitas Negeri Medan untuk berbagi cerita dan aspirasi, dengan pengelompokan kategori otomatis serta penyaringan keamanan sebelum tayang.
           </p>
-          {/* Cara Kerja */}
-          <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-2.5">
-            <h2 className="text-xl font-semibold text-[#EFEFEF]">Cara Kerja:</h2>
-            <ol className="list-decimal list-inside text-xs sm:text-lg text-[#CFCFCF] space-y-1.5 leading-relaxed">
-              {LANGKAH.map((teks) => (
-                <li key={teks}>{teks}</li>
-              ))}
-            </ol>
-          </div>
+        </div>
+
+        {/* Cara Kerja */}
+        <div className="rounded-xl border border-[#1f2a22] bg-[#151b16] p-5 space-y-3">
+          <h2 className="text-lg font-semibold text-[#FCFCFC]">Cara Kerja</h2>
+          <ol className="list-decimal list-outside pl-5 text-sm sm:text-base text-[#CFCFCF] space-y-2 leading-relaxed">
+            {LANGKAH.map((teks) => (
+              <li key={teks}>{teks}</li>
+            ))}
+          </ol>
         </div>
       </div>
 
       {/* Kategori */}
-      <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-3">
-        <h2 className="text-xl font-semibold text-[#EFEFEF]">Kategori Otomatis:</h2>
-        <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="rounded-xl border border-[#1f2a22] bg-[#151b16] p-5 space-y-3.5">
+        <h2 className="text-lg font-semibold text-[#FCFCFC]">Kategori Otomatis</h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {KATEGORI.map((k) => (
             <div
               key={k.nama}
-              className="rounded-lg bg-[#252525] p-3 border border-[#333333] space-y-0.5"
+              className="rounded-xl border border-[#1f2a22] bg-[#171f1a] hover:border-[#2f4636] p-4 space-y-1.5 transition-colors"
             >
-              <p className="font-semibold text-[2rem] text-[#EFEFEF]">{k.nama}</p>
-              <p className="text-lg text-[#A3A3A3] leading-relaxed">{k.isi}</p>
+              <p className="font-semibold text-lg text-[#22e07a]">{k.nama}</p>
+              <p className="text-sm text-[#CFCFCF] leading-relaxed">{k.isi}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Moderasi dan Privasi */}
-      <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-2.5">
-        <h2 className="text-xl font-semibold text-[#EFEFEF]">Moderasi dan Privasi:</h2>
-        <ul className="list-disc list-inside text-lg sm:text-lg text-[#CFCFCF] space-y-1.5 leading-relaxed">
+      <div className="rounded-xl border border-[#1f2a22] bg-[#151b16] p-5 space-y-3">
+        <h2 className="text-lg font-semibold text-[#FCFCFC]">Moderasi dan Privasi</h2>
+        <ul className="list-disc list-outside pl-5 text-sm sm:text-base text-[#CFCFCF] space-y-2 leading-relaxed">
           {MODERASI_PRIVASI.map((teks) => (
             <li key={teks}>{teks}</li>
           ))}
@@ -84,9 +83,9 @@ export function AboutPage() {
       </div>
 
       {/* Aturan Komunitas */}
-      <div className="rounded-xl bg-[#2B2B2B] p-4 border border-[#3A3A3A] space-y-2.5">
-        <h2 className="text-xl font-semibold text-[#EFEFEF]">Aturan Komunitas:</h2>
-        <ul className="list-disc list-inside text-lg sm:text-lg text-[#CFCFCF] space-y-1.5 leading-relaxed">
+      <div className="rounded-xl border border-[#1f2a22] bg-[#151b16] p-5 space-y-3">
+        <h2 className="text-lg font-semibold text-[#FCFCFC]">Aturan Komunitas</h2>
+        <ul className="list-disc list-outside pl-5 text-sm sm:text-base text-[#CFCFCF] space-y-2 leading-relaxed">
           {ATURAN.map((teks) => (
             <li key={teks}>{teks}</li>
           ))}

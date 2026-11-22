@@ -141,7 +141,10 @@ def vote_menfess(
     cek_batas(f"vote:{token_hash}", *LIMITS["vote_min"], "vote terlalu cepat")
 
     with conn.cursor() as cur:
-        cur.execute("SELECT id FROM menfess WHERE id = %s", (menfess_id,))
+        cur.execute(
+            "SELECT id FROM menfess WHERE id = %s AND status = 'published'",
+            (menfess_id,),
+        )
         if not cur.fetchone():
             raise HTTPException(status_code=404, detail="Menfess tidak ditemukan")
 
@@ -187,7 +190,10 @@ def alias_untuk(cur, menfess_id: int, token_hash: str) -> str:
 @router.get("/{menfess_id}/comments")
 def baca_komentar(menfess_id: int, conn = Depends(get_db)):
     with conn.cursor() as cur:
-        cur.execute("SELECT id FROM menfess WHERE id = %s", (menfess_id,))
+        cur.execute(
+            "SELECT id FROM menfess WHERE id = %s AND status = 'published'",
+            (menfess_id,),
+        )
         if not cur.fetchone():
             raise HTTPException(status_code=404, detail="Menfess tidak ditemukan")
 
@@ -221,7 +227,10 @@ def kirim_komentar(
     cek_batas(f"comment_m:{token_hash}", 10, 60, "berkomentar terlalu cepat")
 
     with conn.cursor() as cur:
-        cur.execute("SELECT id FROM menfess WHERE id = %s", (menfess_id,))
+        cur.execute(
+            "SELECT id FROM menfess WHERE id = %s AND status = 'published'",
+            (menfess_id,),
+        )
         if not cur.fetchone():
             raise HTTPException(status_code=404, detail="Menfess tidak ditemukan")
 

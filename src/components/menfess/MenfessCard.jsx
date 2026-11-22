@@ -38,12 +38,12 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
       className={
         isDetail
           ? "space-y-3"
-          : "rounded-2xl bg-[#252525] border border-[#3A3A3A] hover:border-[#525252] p-5 space-y-3 transition-colors cursor-pointer shadow-xl"
+          : "rounded-2xl bg-[#0d110e] border border-[#1f2a22] hover:border-[#2f4636] p-5 space-y-3 transition-colors cursor-pointer shadow-xl"
       }
     >
       {/* Header Kategori & Waktu */}
       <div className="flex items-center justify-between text-xs text-[#8E8E8E]">
-        <span className="rounded-full bg-[#3A3A3A] px-3 py-1 font-semibold text-[#CFCFCF]">
+        <span className="rounded-full bg-[#0f3d24] px-3 py-1 font-semibold text-[#22e07a]">
           {menfess.tag}
         </span>
         <span>{menfess.timestamp}</span>
@@ -62,12 +62,12 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#CFCFCF]">
           {/* Satu Kapsul Pill Vote ala Reddit */}
           <div
-            className={`inline-flex items-center rounded-full px-1 py-0.5 transition-colors ${
+            className={`inline-flex items-center rounded-full border px-1 py-0.5 transition-colors ${
               menfess.user_vote === 1
-                ? "bg-[#4A3A2A] text-[#F59E0B]"
+                ? "border-[#F59E0B]/40 bg-[#4A3A2A] text-[#F59E0B]"
                 : menfess.user_vote === -1
-                ? "bg-[#2D394A] text-blue-400"
-                : "bg-[#3A3A3A] text-[#CFCFCF]"
+                ? "border-blue-400/40 bg-[#2D394A] text-blue-400"
+                : "border-[#2f4636] bg-[#151b16] text-[#CFCFCF]"
             }`}
           >
             <button
@@ -76,7 +76,7 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
               disabled={!onVote || isVoting}
               aria-pressed={menfess.user_vote === 1}
               aria-label="Upvote"
-              className="p-1.5 rounded-full hover:bg-white/10 transition cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+              className="p-1.5 rounded-full hover:bg-[#1f2a22]  transition cursor-pointer disabled:opacity-60 disabled:cursor-wait"
             >
               <ArrowBigUp
                 className={`size-4 ${menfess.user_vote === 1 ? "fill-current" : ""}`}
@@ -96,7 +96,7 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
               disabled={!onVote || isVoting}
               aria-pressed={menfess.user_vote === -1}
               aria-label="Downvote"
-              className="p-1.5 rounded-full hover:bg-white/10 transition cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+              className="p-1.5 rounded-full hover:bg-[#1f2a22]  transition cursor-pointer disabled:opacity-60 disabled:cursor-wait"
             >
               <ArrowBigDown
                 className={`size-4 ${menfess.user_vote === -1 ? "fill-current" : ""}`}
@@ -110,10 +110,11 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
             onClick={() => {
               if (!isDetail) navigate(`/menfess/${menfess.id}`);
             }}
-            className="inline-flex items-center px-3 py-1.5 gap-1.5 rounded-full bg-[#3A3A3A] text-xs font-medium text-[#CFCFCF] hover:bg-[#4A4A4A] transition cursor-pointer"
+            aria-label={`${menfess.comment_count ?? 0} komentar`}
+            className="inline-flex items-center px-3 py-1.5 gap-1.5 rounded-full bg-[#151b16] text-[#CFCFCF] text-xs font-medium hover:bg-[#1f2a22] transition cursor-pointer"
           >
             <MessageCircle className="size-4" />
-            <span>{menfess.comment_count > 0 ? menfess.comment_count : "Komentar"}</span>
+            <span className="tabular-nums">{menfess.comment_count ?? 0}</span>
           </button>
 
           {/* Tombol Bagikan */}
@@ -122,7 +123,7 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
             onClick={() => {
               navigator.clipboard?.writeText(`${window.location.origin}/menfess/${menfess.id}`);
             }}
-            className="inline-flex items-center px-3 py-1.5 gap-1.5 rounded-full bg-[#3A3A3A] text-xs font-medium text-[#CFCFCF] hover:bg-[#4A4A4A] transition cursor-pointer"
+            className="inline-flex items-center px-3 py-1.5 gap-1.5 rounded-full bg-[#151b16] text-[#CFCFCF] text-xs font-medium hover:bg-[#1f2a22] transition cursor-pointer"
           >
             <Share2 className="size-4" />
             <span>Bagikan</span>

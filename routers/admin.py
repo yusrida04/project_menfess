@@ -1,3 +1,4 @@
+import hmac
 import os
 from fastapi import APIRouter, Depends, HTTPException, Header
 from pydantic import BaseModel
@@ -5,11 +6,15 @@ from database import get_db
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
-ADMIN_SECRET_TOKEN = os.getenv("ADMIN_SECRET_TOKEN", "rahasia-unimed-2026")
+def get_admin_secret() -> str:
+    secret = os.getenv("ADMIN_SECRET_TOKEN")
+    if not secret:
+        raise HTTPException(status_code=503, detail="Autentikasi admin belum dikonfigurasi")
+    return secret
 
 # Dependency untuk mengunci semua endpoint admin
 def verify_admin(authorization: str = Header(None)):
-    if authorization != f"Bearer {ADMIN_SECRET_TOKEN}":
+    if not hmac.compare_digest(authorization or "", f"Bearer {get_admin_secret()}"):
         raise HTTPException(status_code=401, detail="Akses admin ditolak")
     return True
 
@@ -22,9 +27,10 @@ class UpdateKategoriReq(BaseModel):
 # 1. Endpoint Login Admin
 @router.post("/login")
 def admin_login(payload: LoginRequest):
-    if payload.password != ADMIN_SECRET_TOKEN:
+    secret = get_admin_secret()
+    if not hmac.compare_digest(payload.password, secret):
         raise HTTPException(status_code=401, detail="Password admin salah")
-    return {"token": ADMIN_SECRET_TOKEN}
+    return {"token": secret}
 
 # 2. Ambil daftar menfess berdasarkan status ('flagged' atau 'published')
 @router.get("/menfess", dependencies=[Depends(verify_admin)])

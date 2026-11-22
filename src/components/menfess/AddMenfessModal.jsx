@@ -36,15 +36,15 @@ export function AddMenfessModal({ isOpen, onClose, onAddMenfess }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-[#252525] p-6 shadow-xl border border-[#4A4A4A] animate-fadeIn">
+      <div className="w-full max-w-lg rounded-2xl bg-[#0d110e] p-6 shadow-xl border border-[#1f2a22] animate-fadeIn">
         
         {/* Header Modal */}
-        <div className="flex items-center justify-between pb-3 border-[#4A4A4A]">
+        <div className="flex items-center justify-between pb-3 border-[#1f2a22]">
           <h3 className="text-lg font-bold text-[#FCFCFC]">Kirim Menfess Baru</h3>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none"
+            className="rounded-full p-1.5 text-gray-400 hover:bg-[#171f1a] hover:text-[#FCFCFC] focus:outline-none transition-colors"
             aria-label="Tutup"
           >
             <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -64,7 +64,7 @@ export function AddMenfessModal({ isOpen, onClose, onAddMenfess }) {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Tulis pesan rahasiamu di sini... (Identitasmu 100% anonim)"
-              className="w-full resize-none rounded-xl border border-[#4A4A4A] bg-[#4A4A4A] p-3 text-sm text-[#FCFCFC] placeholder:text-[#8E8E8E] focus:border-[#7D7D7D] focus:outline-none"
+              className="w-full resize-none rounded-xl border border-[#1f2a22] bg-[#171f1a] p-3 text-sm text-[#FCFCFC] placeholder:text-[#8E8E8E] focus:border-[#2f4636] focus:outline-none"
               autoFocus
             />
             <div className="mt-1 flex justify-between text-xs text-gray-400">
@@ -77,16 +77,9 @@ export function AddMenfessModal({ isOpen, onClose, onAddMenfess }) {
           {/* Tombol Aksi */}
           <div className="flex items-center justify-end gap-2 pt-2">
             <button
-              type="button"
-              onClick={onClose}
-              className="rounded-full px-4 py-2 text-sm font-medium text-[#CFCFCF] bg-[#3A3A3A] hover:bg-[#4A4A4A] focus:outline-none"
-            >
-              Batal
-            </button>
-            <button
               type="submit"
               disabled={!content.trim() || isSubmitting}
-              className="rounded-full px-5 py-2 text-sm font-medium text-[#1F1F1F] bg-[#F59E0B] hover:bg-[#FBBF24] disabled:bg-[#3A3A3A] disabled:text-[#7D7D7D] disabled:cursor-not-allowed focus:outline-none transition-colors"
+              className="rounded-full px-5 py-2 text-sm font-medium text-[#1F1F1F] bg-[#22e07a] hover:bg-[#86efac] disabled:bg-[#121714] disabled:text-[#7D7D7D] disabled:cursor-not-allowed focus:outline-none transition-colors"
             >
               {isSubmitting ? "Mengirim..." : "Kirim Sekarang"}
             </button>

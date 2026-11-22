@@ -5,7 +5,7 @@ import { AddMenfessModal } from "./components/menfess/AddMenfessModal";
 import { HomePage } from "./pages/HomePage";
 import { PopularPage } from "./pages/PopularPage";
 import { AboutPage } from "./pages/AboutPage";
-import { AdminPage } from "./pages/AdminPage"; // <-- Tambahkan ini
+import { AdminPage } from "./pages/admin/AdminDashboard"; // <-- Tambahkan ini
 import { apiFetch } from "./utils/api";
 import { MenfessDetailPage } from "./pages/MenfessDetailPage";
 
@@ -68,7 +68,7 @@ export function App() {
   ) : null;
 
   return (
-    <div className="min-h-screen bg-[#252525]">
+    <div className="min-h-screen bg-[#050705]">
       {/* 1. Navbar */}
       <Navbar
         onOpenModal={() => setIsModalOpen(true)}
@@ -90,7 +90,11 @@ export function App() {
             path="/"
             element={
               feedStatus || (
-                <HomePage menfessList={menfessList} onVote={handleVote} />
+                <HomePage
+                  menfessList={menfessList}
+                  searchQuery={searchQuery}
+                  onVote={handleVote}
+                />
               )
             }
           />
@@ -98,7 +102,11 @@ export function App() {
             path="/populer"
             element={
               feedStatus || (
-                <PopularPage menfessList={menfessList} onVote={handleVote} />
+                <PopularPage
+                  menfessList={menfessList}
+                  searchQuery={searchQuery}
+                  onVote={handleVote}
+                />
               )
             }
           />
@@ -112,7 +120,7 @@ export function App() {
             }
           />
           <Route path="/tentang" element={<AboutPage />} />
-          <Route path="/admin" element={<AdminPage />} /> {/* <-- Rute Admin */}
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </main>
 

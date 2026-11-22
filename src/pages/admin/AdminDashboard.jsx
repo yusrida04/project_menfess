@@ -1,7 +1,61 @@
 import { useEffect, useState } from "react";
-import { apiFetch } from "../utils/api";
+import { apiFetch } from "../../utils/api";
 
 const KATEGORI_LIST = ["Asmara", "Kampus", "Sosial", "Lainnya"];
+
+function CategoryDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        className="flex min-w-[145px] items-center justify-between gap-2 rounded-lg border border-neutral-700 bg-[#2A2A2A] px-3 py-1.5 text-xs font-medium text-white transition hover:border-neutral-500 focus:border-emerald-500 focus:outline-none"
+      >
+        <span>{value}</span>
+        <svg
+          className={`h-3.5 w-3.5 text-neutral-400 transition-transform duration-150 ${
+            open ? "rotate-180" : ""
+          }`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="absolute right-0 z-20 mt-1.5 w-36 overflow-hidden rounded-xl border border-neutral-700 bg-[#252525] p-1 shadow-xl">
+          {KATEGORI_LIST.map((kat) => {
+            const isSelected = kat === value;
+            return (
+              <button
+                key={kat}
+                type="button"
+                onMouseDown={() => {
+                  onChange(kat);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
+                  isSelected
+                    ? "bg-emerald-600/20 font-medium text-emerald-400"
+                    : "text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                }`}
+              >
+                <span>{kat}</span>
+                {isSelected && <span className="text-[10px]">✓</span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function AdminPage() {
   const [token, setToken] = useState(() => localStorage.getItem("admin_token") || "");
@@ -9,9 +63,9 @@ export function AdminPage() {
   const [authError, setAuthError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const [activeTab, setActiveTab] = useState("flagged"); // 'flagged' | 'published'
+  const [activeTab, setActiveTab] = useState("flagged");
   const [items, setItems] = useState([]);
-  const [loadedKey, setLoadedKey] = useState(""); // Penanda data yang sudah selesai dimuat
+  const [loadedKey, setLoadedKey] = useState("");
 
   const currentKey = token ? `${token}:${activeTab}` : "";
   const loading = Boolean(token) && loadedKey !== currentKey;
@@ -48,7 +102,7 @@ export function AdminPage() {
     };
   }, [token, activeTab]);
 
-const handleLogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setAuthError("");
     setIsLoggingIn(true);
@@ -60,8 +114,8 @@ const handleLogin = async (e) => {
       localStorage.setItem("admin_token", res.token);
       setToken(res.token);
       setPassword("");
-    } catch {
-      setAuthError("Password admin salah atau server tidak merespons.");
+    } catch (err) {
+      setAuthError(err.message || "Gagal terhubung ke server.");
     } finally {
       setIsLoggingIn(false);
     }
@@ -104,40 +158,42 @@ const handleLogin = async (e) => {
     );
   };
 
-  // --- TAMPILAN LOGIN ADMIN ---
+  // --- TAMPILAN LOGIN ADMIN (TENGAH LAYAR) ---
   if (!token) {
     return (
-      <div className="mx-auto mt-10 max-w-md rounded-xl border border-neutral-700 bg-[#1E1E1E] p-6 text-[#CFCFCF]">
-        <h1 className="mb-1 text-lg font-semibold text-white">Login Moderator UNIMED Menfess</h1>
-        <p className="mb-4 text-xs text-neutral-400">
-          Masuk untuk meninjau menfess dengan confidence IndoBERT &lt; 80%.
-        </p>
+      <div className="flex min-h-[calc(100vh-120px)] w-full items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-xl border border-neutral-700 bg-[#1E1E1E] p-6 text-[#CFCFCF]">
+          <h1 className="mb-1 text-lg font-semibold text-white">Login Moderator UNIMED Menfess</h1>
+          <p className="mb-4 text-xs text-neutral-400">
+            Masuk untuk meninjau menfess dengan confidence IndoBERT &lt; 80%.
+          </p>
 
-        <form onSubmit={handleLogin} className="space-y-3">
-          <input
-            type="password"
-            placeholder="Masukkan password admin..."
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full rounded-lg border border-neutral-700 bg-[#2A2A2A] px-3 py-2 text-sm text-white focus:border-emerald-500 focus:outline-none"
-          />
-          {authError && <p className="text-xs text-red-400">{authError}</p>}
-          <button
-            type="submit"
-            disabled={isLoggingIn}
-            className="w-full rounded-lg bg-emerald-600 py-2 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
-          >
-            {isLoggingIn ? "Memverifikasi..." : "Masuk Dashboard"}
-          </button>
-        </form>
+          <form onSubmit={handleLogin} className="space-y-3">
+            <input
+              type="password"
+              placeholder="Masukkan password admin..."
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full rounded-lg border border-neutral-700 bg-[#2A2A2A] px-3 py-2 text-sm text-white focus:border-[#F59E0B] focus:outline-none"
+            />
+            {authError && <p className="text-xs text-red-400">{authError}</p>}
+            <button
+              type="submit"
+              disabled={isLoggingIn}
+              className="w-full rounded-lg bg-[#F59E0B] py-2 text-sm font-medium text-[#1F1F1F] transition-colors hover:bg-[#FBBF24] disabled:opacity-50"
+            >
+              {isLoggingIn ? "Memverifikasi..." : "Masuk Dashboard"}
+            </button>
+          </form>
+        </div>
       </div>
     );
   }
 
   // --- TAMPILAN DASHBOARD MODERASI ---
   return (
-    <div className="mx-auto max-w-3xl space-y-4 text-[#CFCFCF]">
+    <div className="mx-auto w-full max-w-3xl space-y-4 text-[#CFCFCF]">
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-neutral-700 bg-[#1E1E1E] p-4">
         <div>
           <h1 className="text-lg font-semibold text-white">Panel Moderasi Human-in-the-Loop</h1>
@@ -216,20 +272,13 @@ const handleLogin = async (e) => {
                     )}
                   </div>
 
-                  {/* Dropdown Koreksi Kategori */}
-                  <div className="flex items-center gap-1.5">
-                    <label className="text-neutral-400">Kategori:</label>
-                    <select
+                  {/* Dropdown Koreksi Kategori (Sudah dirapikan, tidak dobel) */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-neutral-400">Kategori:</span>
+                    <CategoryDropdown
                       value={item.tag}
-                      onChange={(e) => handleChangeKategori(item.id, e.target.value)}
-                      className="rounded border border-neutral-600 bg-[#2A2A2A] px-2 py-1 text-xs text-white focus:outline-none"
-                    >
-                      {KATEGORI_LIST.map((kat) => (
-                        <option key={kat} value={kat}>
-                          {kat}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={(newKat) => handleChangeKategori(item.id, newKat)}
+                    />
                   </div>
                 </div>
 

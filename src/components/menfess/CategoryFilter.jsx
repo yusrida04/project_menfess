@@ -19,8 +19,8 @@ export function CategoryFilter({ selectedCategory, onSelectCategory }) {
             onClick={() => onSelectCategory(cat.id)}
             className={`text-left rounded-xl p-3 border transition-all cursor-pointer ${
               isActive
-                ? "bg-[#3A3A3A] border-[#7f7e7e] shadow-sm"
-                : "border-[#4A4A4A] bg-[#3A3A3A] text-[#FCFCFC] hover:bg-[#525252] focus:outline-none inset-shadow-sm"
+                ? "bg-[#141c17] border-[#354d3e] shadow-sm"
+                : "border-[#1f2a22] bg-[#0d110e] text-[#FCFCFC] hover:bg-[#141c17] focus:outline-none inset-shadow-sm"
             }`}
           >
             <div

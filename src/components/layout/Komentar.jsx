@@ -64,7 +64,7 @@ export function Komentar({ menfessId, onCommentAdded }) {
   );
 
   return (
-    <div className="pt-3 mt-3 border-t border-[#3A3A3A] space-y-4">
+    <div className="pt-3 mt-3 border-t border-[#1f2a22] space-y-4">
       {/* 1. Input Kapsul "Gabung dalam percakapan" ala Reddit */}
       <form onSubmit={handleSend} className="relative flex items-center">
         <input
@@ -73,12 +73,12 @@ export function Komentar({ menfessId, onCommentAdded }) {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Gabung dalam percakapan..."
-          className="w-full rounded-full bg-[#1F1F1F] border border-[#4A4A4A] pl-4 pr-11 py-2.5 text-sm text-[#FCFCFC] placeholder:text-[#8E8E8E] focus:border-[#7D7D7D] focus:outline-none"
+          className="w-full rounded-full border border-[#1f2a22] bg-[#171f1a] pl-4 pr-11 py-2.5 text-sm text-[#FCFCFC] placeholder:text-[#8E8E8E] focus:border-[#1f2a22] focus:outline-none"
         />
         <button
           type="submit"
           disabled={!newComment.trim() || isSending}
-          className="absolute right-1.5 inline-flex items-center justify-center size-8 rounded-full bg-[#F59E0B] text-[#1F1F1F] hover:bg-[#FBBF24] disabled:bg-transparent disabled:text-[#6E6E6E] disabled:cursor-not-allowed transition-colors cursor-pointer"
+          className="absolute right-1.5 inline-flex items-center justify-center size-8 rounded-full bg-[#22e07a] text-[#1F1F1F] hover:bg-[#86efac] disabled:bg-transparent disabled:text-[#6E6E6E] disabled:cursor-not-allowed transition-colors cursor-pointer"
           aria-label="Kirim Komentar"
         >
           <Send className="size-4" />
@@ -101,7 +101,7 @@ export function Komentar({ menfessId, onCommentAdded }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Telusuri komentar"
-              className="w-full rounded-full bg-[#1F1F1F] border border-[#3A3A3A] pl-8 pr-3 py-1 text-xs text-[#CFCFCF] placeholder:text-[#8E8E8E] focus:border-[#5A5A5A] focus:outline-none"
+              className="w-full rounded-full bg-[#171f1a] border border-[#1f2a22] pl-8 pr-3 py-1 text-xs text-[#CFCFCF] placeholder:text-[#8E8E8E] focus:border-[#1f2a22] focus:outline-none"
             />
           </div>
         </div>
