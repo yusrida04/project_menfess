@@ -1,6 +1,9 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+from database import init_db
+init_db()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import menfess, admin

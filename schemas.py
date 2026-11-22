@@ -9,3 +9,8 @@ class VoteCreate(BaseModel):
     
 class CommentCreate(BaseModel):
     content: str = Field(..., min_length=1, max_length=250)
+    
+class MenfessCreate(BaseModel):
+    tag: str = "Umum"
+    content: str
+    music_data: dict | None = None

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
+from psycopg2.extras import Json
 from database import get_db
 from dependencies import get_token_hash
 from rate_limiter import LIMITS, cek_batas, cek_batas_ip
@@ -33,6 +34,7 @@ def baca_menfess(
                 m.id,
                 m.category AS tag,
                 m.content,
+                m.music_data,
                 m.likes,
                 m.created_at,
                 COALESCE(v.value, 0) AS user_vote,
@@ -50,6 +52,7 @@ def baca_menfess(
             "id": r["id"],
             "tag": r["tag"],
             "content": r["content"],
+            "music_data": r["music_data"],
             "likes": r["likes"],
             "user_vote": r["user_vote"],
             "comment_count": r["comment_count"],
@@ -74,6 +77,7 @@ def baca_detail_menfess(
                 m.id,
                 m.category AS tag,
                 m.content,
+                m.music_data,
                 m.likes,
                 m.created_at,
                 COALESCE(v.value, 0) AS user_vote,
@@ -92,6 +96,7 @@ def baca_detail_menfess(
         "id": r["id"],
         "tag": r["tag"],
         "content": r["content"],
+        "music_data": r["music_data"],
         "likes": r["likes"],
         "user_vote": r["user_vote"],
         "comment_count": r["comment_count"],
@@ -112,25 +117,28 @@ def kirim_menfess(
     teks_bersih = payload.content.strip()
     kategori_ai, confidence_ai = prediksi_kategori(teks_bersih)
     status_menfess = tentukan_status_menfess(kategori_ai, confidence_ai)
+    music_json = Json(payload.music_data) if payload.music_data else None
 
     with conn.cursor() as cur:
         cur.execute("""
-            INSERT INTO menfess (category, content, status, confidence)
-            VALUES (%s, %s, %s, %s)
-            RETURNING id, category AS tag, content, likes, status, created_at
-        """, (kategori_ai, teks_bersih, status_menfess, confidence_ai))
+            INSERT INTO menfess (category, content, music_data, status, confidence)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id, category AS tag, content, music_data, likes, status, created_at
+        """, (kategori_ai, teks_bersih, music_json, status_menfess, confidence_ai))
         row = cur.fetchone()
 
     return {
         "id": row["id"],
         "tag": row["tag"],
         "content": row["content"],
+        "music_data": row["music_data"],
         "likes": row["likes"],
         "status": row["status"],
         "user_vote": 0,
+        "comment_count": 0,
         "timestamp": "Baru saja",
     }
-
+    
 @router.post("/{menfess_id}/vote")
 def vote_menfess(
     menfess_id: int,

@@ -19,3 +19,15 @@ def get_db():
         raise
     finally:
         conn.close()
+
+def init_db():
+    conn = psycopg2.connect(DATABASE_URL)
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                ALTER TABLE menfess
+                ADD COLUMN IF NOT EXISTS music_data JSONB DEFAULT NULL;
+            """)
+        conn.commit()
+    finally:
+        conn.close()
