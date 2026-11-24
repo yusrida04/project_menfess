@@ -1,0 +1,9 @@
+{
+  "classes": [
+    "Aman",
+    "Kasar",
+    "SARA"
+  ],
+  "unsafe_threshold": 0.566349,
+  "recall_target": 0.9
+}

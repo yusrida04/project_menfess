@@ -10,7 +10,12 @@ import {
   Pause,
 } from "lucide-react";
 
-function ReelsMusicBar({ music }) {
+const TEXT_OUTLINE_STYLE = {
+  textShadow:
+    "-1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000, 0 3px 10px rgba(0,0,0,0.85)",
+};
+
+function FloatingMusicPill({ music }) {
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -32,33 +37,37 @@ function ReelsMusicBar({ music }) {
   return (
     <div
       onClick={(e) => e.stopPropagation()}
-      className="flex flex-1 min-w-0 items-center justify-between gap-2 rounded-full border border-[#1f2a22] bg-[#151b16] px-3 py-1"
+      className="inline-flex max-w-full items-center gap-2.5 rounded-full border border-white/10 bg-black/70 px-3 py-1.5 backdrop-blur-md"
     >
-      {/* Kiri: Ikon Nada + Judul • Artis memanjang dalam 1 baris */}
-      <div className="flex min-w-0 items-center gap-2 text-xs">
+      {/* Ikon Nada + Judul • Artis */}
+      <button
+        type="button"
+        onClick={togglePlay}
+        className="flex min-w-0 items-center gap-1.5 text-left text-xs cursor-pointer"
+      >
         <Music
-          className={`size-3.5 shrink-0 ${
-            isPlaying ? "text-[#22e07a] animate-pulse" : "text-[#22e07a]"
+          className={`size-3.5 shrink-0 text-[#22e07a] ${
+            isPlaying ? "animate-bounce" : ""
           }`}
         />
-        <p className="truncate text-[#CFCFCF]">
-          <span className="font-medium text-[#FCFCFC]">{music.title}</span>
+        <span className="truncate">
+          <span className="font-semibold text-[#FCFCFC]">{music.title}</span>
           <span className="mx-1.5 text-[#8E8E8E]">•</span>
-          <span className="text-[#8E8E8E]">{music.artist}</span>
-        </p>
-      </div>
+          <span className="text-[#CFCFCF]">{music.artist}</span>
+        </span>
+      </button>
 
-      {/* Kanan: Tombol Play Bulat Kecil */}
+      {/* Tombol Play Bulat Kecil di Kanan */}
       <button
         type="button"
         onClick={togglePlay}
         aria-label={isPlaying ? "Jeda lagu" : "Putar lagu"}
-        className="flex size-5 shrink-0 items-center justify-center rounded-full bg-[#22e07a] text-[#1F1F1F] transition hover:bg-[#86efac] cursor-pointer"
+        className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white/15 text-[#FCFCFC] hover:bg-[#22e07a] hover:text-[#1F1F1F] transition cursor-pointer"
       >
         {isPlaying ? (
-          <Pause className="size-2.5 fill-current" />
+          <Pause className="size-3 fill-current" />
         ) : (
-          <Play className="size-2.5 fill-current ml-0.5" />
+          <Play className="size-3 fill-current ml-0.5" />
         )}
       </button>
 
@@ -102,36 +111,66 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
   const displayLikes = Math.max(0, menfess.likes ?? 0);
 
   return (
+    /* max-w-[440px] mx-auto agar kartu tidak melebar full layar */
     <article
       onClick={openDetail}
       className={
         isDetail
-          ? "space-y-4"
-          : "rounded-2xl bg-[#0d110e] border border-[#1f2a22] hover:border-[#2f4636] p-5 space-y-4 transition-colors cursor-pointer shadow-xl"
+          ? "mx-auto w-full max-w-[460px] space-y-3"
+          : "mx-auto w-full max-w-[440px] rounded-2xl bg-[#0d110e] border border-[#1f2a22] hover:border-[#2f4636] p-3 space-y-3 transition-colors cursor-pointer shadow-xl"
       }
     >
-      {/* 1. Header: Tag (Kiri) + Kapsul Musik Panjang (Tengah) + Waktu (Kanan) */}
-      <div className="flex items-center justify-between gap-3 text-xs text-[#8E8E8E]">
-        <span className="shrink-0 rounded-full bg-[#0f3d24] px-3 py-1 font-semibold text-[#22e07a]">
-          {menfess.tag}
-        </span>
+      {/* 1. Kanvas Rasio 4:5 (Foto User ATAU Background Hijau Gelap Default) */}
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl border border-[#1f2a22] bg-gradient-to-br from-[#0e1711] via-[#0a120d] to-[#112418]">
+        {menfess.image_url ? (
+          <>
+            <img
+              src={menfess.image_url}
+              alt="Background menfess"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/25" />
+          </>
+        ) : (
+          /* Dekorasi lingkaran samar hijau gelap seperti di mockup jika tanpa foto */
+          <>
+            <div className="pointer-events-none absolute -left-12 top-6 size-64 rounded-full bg-[#15241a]/45 blur-sm" />
+            <div className="pointer-events-none absolute -right-10 bottom-10 size-72 rounded-full bg-[#172b1e]/45 blur-sm" />
+          </>
+        )}
 
-        <ReelsMusicBar music={menfess.music_data} />
+        {/* Overlay Atas: Tag Kategori (Kiri) & Waktu (Kanan) */}
+        <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-2 p-3.5 text-xs">
+          <span className="rounded-full border border-white/10 bg-black/65 px-3 py-1 font-semibold text-[#22e07a] backdrop-blur-md">
+            {menfess.tag}
+          </span>
+          <span className="rounded-full border border-white/10 bg-black/65 px-3 py-1 text-[#CFCFCF] backdrop-blur-md">
+            {menfess.timestamp}
+          </span>
+        </div>
 
-        <span className="shrink-0">{menfess.timestamp}</span>
+        {/* Overlay Tengah: Teks Menfess Putih dengan Pinggiran Hitam */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center px-6 py-14 text-center">
+          <p
+            style={TEXT_OUTLINE_STYLE}
+            className="break-words whitespace-pre-line text-2xl sm:text-[30px] font-bold leading-snug text-white"
+          >
+            {menfess.content}
+          </p>
+        </div>
+
+        {/* Overlay Bawah Kiri: Kapsul Musik Mengambang */}
+        {menfess.music_data && (
+          <div className="absolute inset-x-3.5 bottom-3.5 z-10 flex items-center">
+            <FloatingMusicPill music={menfess.music_data} />
+          </div>
+        )}
       </div>
 
-      {/* 2. Isi Menfess sebagai Bintang Utama */}
-      <div className="py-2">
-        <p className="text-2xl sm:text-[30px] font-medium text-[#FCFCFC] leading-snug whitespace-pre-line">
-          {menfess.content}
-        </p>
-      </div>
-
-      {/* 3. Bar Aksi: Vote, Komentar, Bagikan */}
+      {/* 2. Bar Aksi di Bawah Kanvas: Vote, Komentar, Bagikan */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="space-y-2 pt-1"
+        className="space-y-2 px-0.5"
       >
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#CFCFCF]">
           <div
@@ -183,7 +222,7 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
               if (!isDetail) navigate(`/menfess/${menfess.id}`);
             }}
             aria-label={`${menfess.comment_count ?? 0} komentar`}
-            className="inline-flex items-center px-3 py-1.5 gap-1.5 rounded-full bg-[#151b16] text-[#CFCFCF] text-xs font-medium hover:bg-[#1f2a22] transition cursor-pointer"
+            className="inline-flex items-center px-3 py-1.5 gap-1.5 rounded-full border border-[#1f2a22] bg-[#151b16] text-[#CFCFCF] text-xs font-medium hover:bg-[#1f2a22] transition cursor-pointer"
           >
             <MessageCircle className="size-4" />
             <span className="tabular-nums">{menfess.comment_count ?? 0}</span>
@@ -194,7 +233,7 @@ export function MenfessCard({ menfess, isDetail = false, onVote, onVoteSuccess }
             onClick={() => {
               navigator.clipboard?.writeText(`${window.location.origin}/menfess/${menfess.id}`);
             }}
-            className="inline-flex items-center px-3 py-1.5 gap-1.5 rounded-full bg-[#151b16] text-[#CFCFCF] text-xs font-medium hover:bg-[#1f2a22] transition cursor-pointer"
+            className="inline-flex items-center px-3 py-1.5 gap-1.5 rounded-full border border-[#1f2a22] bg-[#151b16] text-[#CFCFCF] text-xs font-medium hover:bg-[#1f2a22] transition cursor-pointer"
           >
             <Share2 className="size-4" />
             <span>Bagikan</span>

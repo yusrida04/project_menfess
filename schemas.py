@@ -14,3 +14,9 @@ class MenfessCreate(BaseModel):
     tag: str = "Umum"
     content: str
     music_data: dict | None = None
+    image_url: str | None = None
+
+class MenfessModeratorUpdate(BaseModel):
+    content: str = Field(..., min_length=1, max_length=280)
+    tag: str = Field(..., min_length=1, max_length=20)
+    approve: bool = True

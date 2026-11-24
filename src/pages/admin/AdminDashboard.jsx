@@ -181,7 +181,7 @@ export function AdminPage() {
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="w-full rounded-lg bg-[#F59E0B] py-2 text-sm font-medium text-[#1F1F1F] transition-colors hover:bg-[#FBBF24] disabled:opacity-50"
+              className="w-full rounded-lg hover:bg-[#86efac] bg-[#22e07a] py-2 text-sm font-medium text-[#1F1F1F] transition-colors disabled:opacity-50"
             >
               {isLoggingIn ? "Memverifikasi..." : "Masuk Dashboard"}
             </button>

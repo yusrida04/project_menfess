@@ -2,3 +2,5 @@ fastapi
 psycopg2-binary
 pydantic
 uvicorn
+joblib
+scikit-learn==1.6.1

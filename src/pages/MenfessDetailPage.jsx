@@ -28,7 +28,7 @@ export function MenfessDetailPage({ menfessList = [], onVote }) {
     };
 
     fetchDetail();
-  }, [id]);
+  }, [existing, id]);
 
   const handleBack = () => {
     // Jika ada riwayat navigasi di dalam web, kembali ke halaman sebelumnya (Beranda/Populer)

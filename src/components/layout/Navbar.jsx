@@ -74,15 +74,17 @@ export function Navbar({ onOpenModal, searchQuery = "", setSearchQuery }) {
         </div>
 
         {/* 3. KANAN: Menu Tombol */}
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             type="button"
-            className="py-1.5 px-2 sm:px-3 gap-1.5 flex items-center text-xs sm:text-sm font-medium text-[#1F1F1F] hover:bg-[#86efac] bg-[#22e07a] rounded-full focus:outline-none whitespace-nowrap cursor-pointer"
+            className="py-1.5 px-2.5 sm:px-3 gap-1.5 flex items-center text-xs sm:text-sm font-medium text-[#1F1F1F] hover:bg-[#86efac] bg-[#22e07a] rounded-full focus:outline-none whitespace-nowrap cursor-pointer"
             onClick={() => onOpenModal?.()}
+            aria-label="Kirim Menfess"
           >
-            <SquarePlus className="size-4 text-[#1F1F1F]" />
-            <span>Kirim Menfess</span>
+            <SquarePlus className="size-4 text-[#1F1F1F] shrink-0" />
+            <span className="hidden sm:inline">Kirim Menfess</span>
           </button>
+
           <Link
             className="py-1.5 px-2 sm:px-3 gap-1 flex items-center text-xs sm:text-sm text-[#CFCFCF] hover:bg-[#1f2a22] rounded-full focus:outline-none whitespace-nowrap"
             to="/populer"
@@ -90,10 +92,12 @@ export function Navbar({ onOpenModal, searchQuery = "", setSearchQuery }) {
               event.preventDefault();
               triggerCurtain("/populer", { color: "#050705" });
             }}
+            aria-label="Populer"
           >
             <ArrowUpRight className="size-4 text-[#CFCFCF] shrink-0" />
-            <span>Populer</span>
+            <span className="hidden sm:inline">Populer</span>
           </Link>
+
           <Link
             className="py-1.5 px-2 sm:px-3 flex items-center text-xs sm:text-sm text-[#CFCFCF] hover:bg-[#1f2a22] rounded-full focus:outline-none whitespace-nowrap"
             to="/tentang"

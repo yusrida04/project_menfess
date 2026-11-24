@@ -6,6 +6,7 @@ import { HomePage } from "./pages/HomePage";
 import { PopularPage } from "./pages/PopularPage";
 import { AboutPage } from "./pages/AboutPage";
 import { AdminPage } from "./pages/admin/AdminDashboard"; // <-- Tambahkan ini
+import { ModeratorPage } from "./pages/ModeratorPage";
 import { apiFetch } from "./utils/api";
 import { MenfessDetailPage } from "./pages/MenfessDetailPage";
 
@@ -35,7 +36,7 @@ export function App() {
     // Jika confidence < 0.799545, statusnya 'flagged' (ditahan moderator)
     if (newMenfess.status === "flagged") {
       setSubmitNotice(
-        "Menfess terkirim! Karena perlu verifikasi kategori, menfessmu masuk antrean moderasi sebelum tayang."
+        "Menfess terkirim dan sedang ditinjau moderator sebelum ditayangkan."
       );
       setTimeout(() => setSubmitNotice(""), 6000);
       return;
@@ -68,7 +69,7 @@ export function App() {
   ) : null;
 
   return (
-    <div className="min-h-screen bg-[#050705]">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#050705]">
       {/* 1. Navbar */}
       <Navbar
         onOpenModal={() => setIsModalOpen(true)}
@@ -121,6 +122,7 @@ export function App() {
           />
           <Route path="/tentang" element={<AboutPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/moderator" element={<ModeratorPage />} />
         </Routes>
       </main>
 

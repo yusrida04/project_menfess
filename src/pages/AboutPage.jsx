@@ -34,9 +34,6 @@ export function AboutPage() {
       {/* Header */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <div className="space-y-4">
-          <span className="inline-block rounded-full bg-[#0f3d24] px-3 py-1 text-xs font-semibold text-[#22e07a]">
-            Tentang UNIMED Menfess
-          </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-[#22e07a]">
             Cerita yang tak perlu bernama.
           </h1>

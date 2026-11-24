@@ -3,21 +3,22 @@ from psycopg2.extras import Json
 from database import get_db
 from dependencies import get_token_hash
 from rate_limiter import LIMITS, cek_batas, cek_batas_ip
-from schemas import MenfessCreate, VoteCreate, CommentCreate
+from schemas import MenfessCreate, MenfessModeratorUpdate, VoteCreate, CommentCreate
 from classifier import prediksi_kategori
 import hmac, hashlib, os
 
 router = APIRouter(prefix="/menfess", tags=["Menfess"])
 SECRET_KEY = os.getenv("SECRET_KEY", "ganti-dengan-secret-key-acak-panjang")
-THRESHOLD = 0.799545
+ADMIN_SECRET = os.getenv("ADMIN_SECRET") or "unimed-admin-2026"
 
 def format_waktu(dt) -> str:
     return dt.strftime("%d %b %Y, %H:%M") if dt else "Baru saja"
 
-def tentukan_status_menfess(label_prediksi: str, confidence_score: float) -> str:
-    if confidence_score >= THRESHOLD:
-        return "published"
-    return "flagged"
+def verify_admin(x_admin_key: str = Header(default="", alias="X-Admin-Key")):
+    if not hmac.compare_digest(
+        x_admin_key.encode("utf-8"), ADMIN_SECRET.encode("utf-8")
+    ):
+        raise HTTPException(status_code=401, detail="Akses moderator ditolak.")
 
 @router.get("")
 def baca_menfess(
@@ -35,6 +36,7 @@ def baca_menfess(
                 m.category AS tag,
                 m.content,
                 m.music_data,
+                m.image_url,
                 m.likes,
                 m.created_at,
                 COALESCE(v.value, 0) AS user_vote,
@@ -53,6 +55,7 @@ def baca_menfess(
             "tag": r["tag"],
             "content": r["content"],
             "music_data": r["music_data"],
+            "image_url": r["image_url"],
             "likes": r["likes"],
             "user_vote": r["user_vote"],
             "comment_count": r["comment_count"],
@@ -78,6 +81,7 @@ def baca_detail_menfess(
                 m.category AS tag,
                 m.content,
                 m.music_data,
+                m.image_url,
                 m.likes,
                 m.created_at,
                 COALESCE(v.value, 0) AS user_vote,
@@ -97,6 +101,7 @@ def baca_detail_menfess(
         "tag": r["tag"],
         "content": r["content"],
         "music_data": r["music_data"],
+        "image_url": r["image_url"],
         "likes": r["likes"],
         "user_vote": r["user_vote"],
         "comment_count": r["comment_count"],
@@ -114,17 +119,35 @@ def kirim_menfess(
     cek_batas(f"menfess_h:{token_hash}", *LIMITS["menfess_hour"], "mengirim menfess (3/jam)")
     cek_batas(f"menfess_d:{token_hash}", *LIMITS["menfess_day"], "mengirim menfess harian (10/hari)")
 
+    image_data = payload.image_url
+    if image_data is not None:
+        if not image_data.startswith("data:image/"):
+            raise HTTPException(status_code=400, detail="Format gambar tidak valid.")
+        if len(image_data) > 700_000:
+            raise HTTPException(status_code=400, detail="Ukuran gambar terlalu besar.")
+
     teks_bersih = payload.content.strip()
-    kategori_ai, confidence_ai = prediksi_kategori(teks_bersih)
-    status_menfess = tentukan_status_menfess(kategori_ai, confidence_ai)
+    kategori_ai, confidence_ai, is_safe, flag_reason = prediksi_kategori(teks_bersih)
+    status_menfess = "published" if is_safe else "flagged"
     music_json = Json(payload.music_data) if payload.music_data else None
 
     with conn.cursor() as cur:
         cur.execute("""
-            INSERT INTO menfess (category, content, music_data, status, confidence)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id, category AS tag, content, music_data, likes, status, created_at
-        """, (kategori_ai, teks_bersih, music_json, status_menfess, confidence_ai))
+            INSERT INTO menfess (
+                category, content, music_data, image_url, status, confidence, flag_reason
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING id, category AS tag, content, music_data, image_url, likes,
+                      status, confidence, flag_reason, created_at
+        """, (
+            kategori_ai,
+            teks_bersih,
+            music_json,
+            image_data,
+            status_menfess,
+            confidence_ai,
+            flag_reason if status_menfess == "flagged" else None,
+        ))
         row = cur.fetchone()
 
     return {
@@ -132,8 +155,10 @@ def kirim_menfess(
         "tag": row["tag"],
         "content": row["content"],
         "music_data": row["music_data"],
+        "image_url": row["image_url"],
         "likes": row["likes"],
         "status": row["status"],
+        "flag_reason": row["flag_reason"],
         "user_vote": 0,
         "comment_count": 0,
         "timestamp": "Baru saja",
@@ -258,3 +283,63 @@ def kirim_komentar(
         "content": row["content"],
         "timestamp": "Baru saja",
     }
+@router.get("/moderator/queue", dependencies=[Depends(verify_admin)])
+def baca_antrean_moderator(conn=Depends(get_db)):
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT id, category AS tag, content, music_data, image_url,
+                   status, confidence, flag_reason, created_at
+            FROM menfess
+            WHERE status = 'flagged'
+            ORDER BY created_at DESC
+        """)
+        rows = cur.fetchall()
+    return [dict(r) for r in rows]
+
+@router.patch("/moderator/{menfess_id}/approve", dependencies=[Depends(verify_admin)])
+def setujui_menfess(menfess_id: int, conn=Depends(get_db)):
+    with conn.cursor() as cur:
+        cur.execute("""
+            UPDATE menfess
+            SET status = 'published', flag_reason = NULL
+            WHERE id = %s
+            RETURNING id, status
+        """, (menfess_id,))
+        row = cur.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Menfess tidak ditemukan.")
+    return {"message": "Menfess disetujui dan tayang.", "id": row["id"]}
+
+@router.put("/moderator/{menfess_id}", dependencies=[Depends(verify_admin)])
+def edit_menfess_moderator(menfess_id: int, payload: MenfessModeratorUpdate, conn=Depends(get_db)):
+    new_status = "published" if payload.approve else "flagged"
+    clean_content = payload.content.strip()
+    clean_tag = payload.tag.strip()
+    if not clean_content:
+        raise HTTPException(status_code=400, detail="Isi menfess tidak boleh kosong.")
+    if not clean_tag:
+        raise HTTPException(status_code=400, detail="Kategori menfess tidak boleh kosong.")
+
+    with conn.cursor() as cur:
+        cur.execute("""
+            UPDATE menfess
+            SET content = %s,
+                category = %s,
+                status = %s,
+                flag_reason = CASE WHEN %s THEN NULL ELSE flag_reason END
+            WHERE id = %s
+            RETURNING id, category AS tag, content, status
+        """, (clean_content, clean_tag, new_status, payload.approve, menfess_id))
+        row = cur.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Menfess tidak ditemukan.")
+    return dict(row)
+
+@router.delete("/moderator/{menfess_id}", dependencies=[Depends(verify_admin)])
+def hapus_menfess_moderator(menfess_id: int, conn=Depends(get_db)):
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM menfess WHERE id = %s RETURNING id", (menfess_id,))
+        row = cur.fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Menfess tidak ditemukan.")
+    return {"message": "Menfess berhasil dihapus.", "id": row["id"]}

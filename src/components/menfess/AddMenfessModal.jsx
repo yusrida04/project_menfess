@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ImagePlus, X } from "lucide-react";
 import { apiFetch } from "../../utils/api";
 
 function MusicPicker({ selectedMusic, onSelectMusic }) {
@@ -147,12 +148,70 @@ function MusicPicker({ selectedMusic, onSelectMusic }) {
   );
 }
 
+function compressImageToDataUrl(file, maxWidth = 900, quality = 0.78) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") {
+        reject(new Error("Gambar tidak dapat dibaca."));
+        return;
+      }
+
+      const image = new Image();
+      image.onload = () => {
+        const scale = Math.min(1, maxWidth / image.naturalWidth);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(image.naturalWidth * scale);
+        canvas.height = Math.round(image.naturalHeight * scale);
+
+        const context = canvas.getContext("2d");
+        if (!context) {
+          reject(new Error("Canvas tidak tersedia."));
+          return;
+        }
+
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      image.onerror = () => reject(new Error("Gambar tidak dapat diproses."));
+      image.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error("Gambar tidak dapat dibaca."));
+    reader.readAsDataURL(file);
+  });
+}
+
+const MEME_TEXT_STYLE = {
+  textShadow:
+    "-1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000",
+};
+
 export function AddMenfessModal({ isOpen, onClose, onAddMenfess }) {
   const [errorMsg, setErrorMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [content, setContent] = useState("");
   const [musicData, setMusicData] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const tag = "Umum";
+
+  const handleImageChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      if (!file.type.startsWith("image/")) {
+        setErrorMsg("File harus berupa gambar.");
+        return;
+      }
+
+      setErrorMsg("");
+      setImageUrl(await compressImageToDataUrl(file));
+    } catch (error) {
+      setErrorMsg(error.message || "Gagal memproses gambar.");
+    } finally {
+      event.target.value = "";
+    }
+  };
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -168,11 +227,13 @@ export function AddMenfessModal({ isOpen, onClose, onAddMenfess }) {
           tag,
           content: content.trim(),
           music_data: musicData,
+          image_url: imageUrl,
         }),
       });
       onAddMenfess(newMenfess);
       setContent("");
       setMusicData(null);
+      setImageUrl(null);
       onClose();
     } catch (err) {
       setErrorMsg(err.message);
@@ -220,6 +281,46 @@ export function AddMenfessModal({ isOpen, onClose, onAddMenfess }) {
               <span>Tetap sopan dan patuhi aturan komunitas.</span>
               <span>{content.length}/280</span>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            {!imageUrl ? (
+              <label className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-[#2f4636] bg-[#151b16] py-2.5 text-xs font-medium text-[#CFCFCF] transition hover:border-[#22e07a] hover:text-[#22e07a]">
+                <ImagePlus className="size-4" />
+                <span>Tambah Background Gambar (Opsional)</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            ) : (
+              <div className="relative mx-auto aspect-[4/5] w-full max-w-[260px] overflow-hidden rounded-xl border border-[#22e07a]/50 bg-black">
+                <img
+                  src={imageUrl}
+                  alt="Preview background"
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute inset-0 flex items-center justify-center p-4 text-center">
+                  <p
+                    style={MEME_TEXT_STYLE}
+                    className="break-words whitespace-pre-line text-lg font-bold leading-snug text-white"
+                  >
+                    {content.trim() || "Pratinjau teksmu di sini..."}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setImageUrl(null)}
+                  className="absolute right-2 top-2 cursor-pointer rounded-full bg-black/70 p-1 text-white transition hover:bg-red-600"
+                  aria-label="Hapus gambar"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Kolom Pencari & Lampiran Lagu */}

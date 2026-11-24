@@ -26,7 +26,9 @@ def init_db():
         with conn.cursor() as cur:
             cur.execute("""
                 ALTER TABLE menfess
-                ADD COLUMN IF NOT EXISTS music_data JSONB DEFAULT NULL;
+                ADD COLUMN IF NOT EXISTS music_data JSONB DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT NULL,
+                ADD COLUMN IF NOT EXISTS flag_reason TEXT DEFAULT NULL;
             """)
         conn.commit()
     finally:
